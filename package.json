@@ -1,0 +1,66 @@
+{
+  "name": "ekran-yayini",
+  "version": "4.2.2",
+  "description": "Ekranınızı bir kamera gibi paylaşın !",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "PromSoftware - promsoftware.com.tr (GitHub: github.com/kaanclyn)",
+  "license": "ISC",
+  "dependencies": {
+    "csv-writer": "^1.6.0",
+    "electron-reload": "^1.5.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "node-rtsp-stream": "^0.0.9",
+    "onvif": "^0.6.9",
+    "os": "^0.1.2"
+  },
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.promsoftware.ekranyayini",
+    "productName": "Ekran Yayını",
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*",
+      "main.js",
+      "index.html",
+      "license.html",
+      "styles.css",
+      "script.js",
+      "intro.css",
+      "intro.html",
+      "stream-handler.js"
+    ],
+    "extraFiles": [
+      {
+        "from": "mediamtx.yml",
+        "to": "mediamtx.yml"
+      },
+      {
+        "from": "mediamtx.exe",
+        "to": "mediamtx.exe"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/ekran-yayini.ico",
+      "requestedExecutionLevel": "requireAdministrator"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "menuCategory": "Ekran Yayını",
+      "shortcutName": "Ekran Yayını"
+    }
+  }
+}

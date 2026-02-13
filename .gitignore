@@ -1,0 +1,8 @@
+node_modules/
+dist/
+out/
+build/
+*.log
+.DS_Store
+mediamtx.exe
+last_use.json

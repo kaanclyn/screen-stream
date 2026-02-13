@@ -1,0 +1,680 @@
+/* Modern tasarım değişkenleri */
+:root {
+    --primary: #4f46e5;
+    --secondary: #06b6d4;
+    --accent: #10b981;
+    --bg-dark: #0a0a0a;
+    --card-bg: rgba(17, 17, 17, 0.7);
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --neon-glow: 0 0 10px rgba(79, 70, 229, 0.5),
+        0 0 20px rgba(79, 70, 229, 0.3),
+        0 0 30px rgba(79, 70, 229, 0.2);
+}
+
+/* Temel animasyonlar */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes networkFlow {
+    0% {
+        stroke-dashoffset: 1000;
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 0.2;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Temel stiller */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Arkaplan animasyonu */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.15) 0%, transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 30%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+    animation: backgroundPulse 15s ease-in-out infinite;
+    z-index: 0;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+}
+
+@keyframes backgroundPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.intro-container {
+    max-width: 1000px;
+    padding: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Logo animasyonu */
+.logo-container {
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: scaleIn 0.6s ease forwards 0.3s;
+}
+
+.logo-animation {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.network-icon {
+    width: 100%;
+    height: 100%;
+    fill: var(--primary);
+    filter: drop-shadow(var(--neon-glow));
+    animation: logoFloat 6s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+
+    75% {
+        transform: translateY(10px) rotate(-5deg);
+    }
+}
+
+/* Başlık stili */
+.welcome-text {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.welcome-text h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: var(--neon-glow);
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards 0.6s;
+}
+
+.welcome-text .subtitle {
+    font-size: 1.4rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards 0.9s;
+}
+
+/* Bilgi kartları */
+.info-sections {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2rem auto;
+    max-width: 1000px;
+    padding: 0 1rem;
+}
+
+.info-section {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 1.2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    width: 260px;
+    min-height: 200px;
+    opacity: 0;
+}
+
+.info-section:nth-child(1) {
+    animation: fadeInUp 0.6s ease forwards 1.2s;
+}
+
+.info-section:nth-child(2) {
+    animation: fadeInUp 0.6s ease forwards 1.5s;
+}
+
+.info-section:nth-child(3) {
+    animation: fadeInUp 0.6s ease forwards 1.8s;
+}
+
+.info-section h3 {
+    font-size: 1.2rem;
+    margin: 0.8rem 0;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.info-section p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    text-align: center;
+}
+
+.icon-container {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 0.8rem;
+}
+
+.icon-container svg {
+    width: 100%;
+    height: 100%;
+    fill: var(--primary);
+    filter: drop-shadow(var(--neon-glow));
+    transition: transform 0.3s ease;
+}
+
+.info-section:hover .icon-container svg {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Ağ animasyonu */
+.network-animation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 2.5rem 0;
+    perspective: 1000px;
+}
+
+.device {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 1rem;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.4s ease;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+}
+
+.device:nth-child(1) {
+    animation: scaleIn 0.6s ease forwards 2.1s;
+}
+
+.device:nth-child(2) {
+    animation: scaleIn 0.6s ease forwards 2.4s;
+}
+
+.device:nth-child(3) {
+    animation: scaleIn 0.6s ease forwards 2.7s;
+}
+
+.device:nth-child(4) {
+    animation: scaleIn 0.6s ease forwards 3s;
+}
+
+.device:nth-child(5) {
+    animation: scaleIn 0.6s ease forwards 3.3s;
+}
+
+.device:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.device-icon {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+    filter: drop-shadow(var(--neon-glow));
+}
+
+.device-icon svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--primary);
+}
+
+.device-label {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.connection-line {
+    height: 3px;
+    width: 80px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+    box-shadow: var(--neon-glow);
+    opacity: 0;
+}
+
+.connection-line:nth-child(2) {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards 2.4s;
+}
+
+.connection-line:nth-child(4) {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards 3s;
+}
+
+.connection-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, white, transparent);
+    animation: flowAnimation 2s linear infinite;
+}
+
+@keyframes flowAnimation {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Firma bilgisi */
+.creator-info {
+    text-align: center;
+    margin-top: 2.5rem;
+}
+
+.creator-info h3 {
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards 3.6s;
+}
+
+.creator-info p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards 3.9s;
+}
+
+.creator-info .version {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards 4.2s;
+}
+
+/* Başlat butonu */
+.start-button {
+    margin-top: 2rem;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 3rem auto 0;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: var(--neon-glow);
+    opacity: 0;
+    animation: scaleIn 0.6s ease forwards 4.5s;
+}
+
+.start-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.start-button:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(79, 70, 229, 0.4);
+}
+
+.start-button:hover::before {
+    transform: translateX(100%);
+}
+
+.start-button svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+/* Yükleme animasyonu */
+body:not(.loaded) * {
+    animation: none !important;
+}
+
+/* Responsive tasarım */
+@media (max-width: 900px) {
+    .welcome-text h1 {
+        font-size: 2.8rem;
+    }
+
+    .welcome-text .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .info-section {
+        width: 100%;
+        max-width: 260px;
+    }
+}
+
+/* Fade out animasyonu */
+.fade-out {
+    animation: fadeOut 0.5s ease forwards !important;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* Info Guide Button & Modal Styles (Global) */
+.info-guide-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), var(--neon-glow);
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.info-guide-button:hover {
+    transform: scale(1.1) rotate(15deg);
+}
+
+/* Modal Base */
+.custom-alert {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 1002;
+    animation: fadeIn 0.3s ease;
+}
+
+.alert-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(17, 17, 17, 0.9);
+    border-radius: 24px;
+    width: 90%;
+    max-width: 650px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.guide-body {
+    padding: 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.guide-step {
+    margin-bottom: 2rem;
+    padding-left: 3.5rem;
+    position: relative;
+}
+
+.step-badge {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+}
+
+.guide-step h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.guide-step p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.guide-step code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    color: var(--secondary);
+}
+
+.guide-footer {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}

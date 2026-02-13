@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ekran Yayını - Hoş Geldiniz</title>
+    <link rel="stylesheet" href="intro.css">
+    <link rel="stylesheet" href="guide-styles.css">
+</head>
+
+<body>
+    <div class="info-guide-button" id="infoGuideBtn" onclick="toggleInfoGuide()">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+            <path fill="currentColor"
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+        </svg>
+    </div>
+
+    <div id="infoGuideModal" class="custom-alert info-guide-modal">
+        <div class="alert-content guide-content-advanced">
+            <div class="modal-header-advanced">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28">
+                            <path fill="currentColor"
+                                d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 2.18l8 3.6v8.72c0 4.33-2.84 8.38-8 9.67-5.16-1.29-8-5.34-8-9.67V7.78l8-3.6z" />
+                            <circle cx="12" cy="12" r="3" fill="currentColor" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2>Lisans Sistemi Entegrasyon Rehberi</h2>
+                        <p class="header-subtitle">Open Source Projenize Lisans Ekleme Kılavuzu</p>
+                    </div>
+                </div>
+                <button class="close-btn-advanced" onclick="toggleInfoGuide()">X</button>
+            </div>
+            <!-- Note: Full content from index.html should be copied here -->
+            <div class="guide-content-area">
+                <p style="text-align:center; padding:2rem; color:#888;">Detaylı rehber ana uygulamada mevcuttur.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="intro-container">
+        <div class="logo-container">
+            <div class="logo-animation">
+                <svg class="network-icon" viewBox="0 0 24 24">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                    <circle class="pulse" cx="12" cy="12" r="3" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="welcome-text">
+            <h1>Ekran Yayını</h1>
+            <p class="subtitle">Yeni Nesil Ekran Paylaşım Deneyimi</p>
+        </div>
+
+        <div class="info-sections">
+            <div class="info-section">
+                <div class="icon-container">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H3V4h18v12z" />
+                    </svg>
+                </div>
+                <h3>Ekran Paylaşımı</h3>
+                <p>Ultra düşük gecikme ve yüksek kalite ile kesintisiz ekran paylaşımı</p>
+            </div>
+
+            <div class="info-section">
+                <div class="icon-container">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M20.2 5.9l.8-.8C19.6 3.7 17.8 3 16 3s-3.6.7-5 2.1l.8.8C13 4.8 14.5 4.2 16 4.2s3 .6 4.2 1.7zm-.9.8c-.9-.9-2.1-1.4-3.3-1.4s-2.4.5-3.3 1.4l.8.8c.7-.7 1.6-1 2.5-1s1.8.3 2.5 1l.8-.8zM19 13h-2V9h-2v4H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z" />
+                    </svg>
+                </div>
+                <h3>Akıllı Ağ Yönetimi</h3>
+                <p>Otomatik port yönlendirme ve gelişmiş ağ optimizasyonu</p>
+            </div>
+
+            <div class="info-section">
+                <div class="icon-container">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M15.9 5c-.17 0-.32.09-.41.23l-.07.15-5.18 11.65c-.16.29-.26.61-.26.96 0 1.11.9 2.01 2.01 2.01.96 0 1.77-.68 1.96-1.59l.01-.03L16.4 5.5c0-.28-.22-.5-.5-.5zM1 9l2 2c2.88-2.88 6.79-4.08 10.53-3.62l1.19-2.68C9.89 3.84 4.74 5.27 1 9zm20 0l2-2c-3.73-3.73-8.87-5.15-13.7-4.31l1.19 2.68C14.21 4.92 18.12 6.12 21 9z" />
+                    </svg>
+                </div>
+                <h3>Çoklu Protokol</h3>
+                <p>RTSP ve WebRTC desteği ile maksimum uyumluluk</p>
+            </div>
+        </div>
+
+        <div class="network-animation">
+            <div class="device">
+                <div class="device-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
+                    </svg>
+                </div>
+                <div class="device-label">Bilgisayar</div>
+            </div>
+            <div class="connection-line"></div>
+            <div class="device">
+                <div class="device-icon">
+                    <svg height="56" viewBox="0 0 56 56" width="56" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="m5.4648 25.0352c.4454.4453 1.1016.4219 1.5234-.0234 5.5313-5.8829 12.8438-8.9766 21.0235-8.9766 8.2265 0 15.5625 3.1171 21.0702 9 .3984.3984 1.0316.3984 1.4535-.0469l3.1171-3.1172c.3749-.3984.3749-.914.0701-1.2891-5.2968-6.5156-15.2578-11.3203-25.7109-11.3203s-20.4141 4.8047-25.711 11.3203c-.3281.3751-.3046.8907.0704 1.2891zm9.375 9.3984c.4688.4922 1.0782.4453 1.5235-.0703 2.7187-3.0235 7.1249-5.2031 11.6484-5.1562 4.5703-.0469 8.9531 2.2031 11.6953 5.2265.4453.4687 1.0312.4687 1.4766-.0234l3.4922-3.4453c.3749-.3751.4218-.8672.0703-1.2657-3.3985-4.1953-9.7032-7.289-16.7344-7.289-7.0313 0-13.3359 3.1172-16.7344 7.289-.3515.3985-.3047.8672.0703 1.2657zm13.1719 12.3047c.4922 0 .9375-.2578 1.8047-1.1016l5.4843-5.2734c.3516-.3281.4219-.8437.1173-1.2422-1.4766-1.8984-4.2422-3.5391-7.4063-3.5391-3.2344 0-6.0469 1.711-7.5 3.6797-.211.3281-.1406.7735.2109 1.1016l5.4844 5.2734c.8672.8438 1.3125 1.1016 1.8047 1.1016z" />
+                    </svg>
+                </div>
+                <div class="device-label">WiFi</div>
+            </div>
+            <div class="connection-line"></div>
+            <div class="device">
+                <div class="device-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                    </svg>
+                </div>
+                <div class="device-label">Cat X (6-7)</div>
+            </div>
+        </div>
+
+        <div class="creator-info">
+            <h3>PromSoftware</h3>
+            <p>Professional Software Development & Solutions</p>
+            <div class="version">V4.2.2</div>
+        </div>
+
+        <button class="start-button" onclick="window.location.href='index.html'">
+            Başla
+            <svg viewBox="0 0 24 24">
+                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('loaded');
+
+            document.querySelector('.start-button').addEventListener('click', function (e) {
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+                setTimeout(function () {
+                    window.location.href = 'index.html';
+                }, 500);
+            });
+        });
+
+        function toggleInfoGuide() {
+            const modal = document.getElementById('infoGuideModal');
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'block';
+            }
+        }
+
+        window.addEventListener('click', (event) => {
+            const infoModal = document.getElementById('infoGuideModal');
+            if (event.target === infoModal) {
+                infoModal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

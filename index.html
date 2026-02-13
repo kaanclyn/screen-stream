@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+
+<head>
+    <title>Ekran Yayını</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="guide-styles.css">
+</head>
+
+<body>
+    <div class="info-guide-button" id="infoGuideBtn" onclick="toggleInfoGuide()">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+            <path fill="currentColor"
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+        </svg>
+    </div>
+
+    <div id="infoGuideModal" class="custom-alert info-guide-modal">
+        <div class="alert-content guide-content-advanced">
+            <div class="modal-header-advanced">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28">
+                            <path fill="currentColor"
+                                d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 2.18l8 3.6v8.72c0 4.33-2.84 8.38-8 9.67-5.16-1.29-8-5.34-8-9.67V7.78l8-3.6z" />
+                            <circle cx="12" cy="12" r="3" fill="currentColor" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2>Lisans Sistemi Entegrasyon Rehberi</h2>
+                        <p class="header-subtitle">Open Source Projenize Lisans Ekleme Kılavuzu</p>
+                    </div>
+                </div>
+                <button class="close-btn-advanced" onclick="toggleInfoGuide()">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor"
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="guide-tabs">
+                <button class="tab-btn active" onclick="switchTab('overview')">📋 Genel Bakış</button>
+                <button class="tab-btn" onclick="switchTab('time-protection')">⏰ Zaman Koruması</button>
+                <button class="tab-btn" onclick="switchTab('expiry')">🗓️ Süre Kontrolü</button>
+                <button class="tab-btn" onclick="switchTab('ui-integration')">🎨 UI Entegrasyon</button>
+                <button class="tab-btn" onclick="switchTab('advanced')">🚀 İleri Seviye</button>
+            </div>
+
+            <div class="guide-content-area">
+                <!-- Overview Tab -->
+                <div id="tab-overview" class="tab-content active">
+                    <div class="flow-diagram">
+                        <div class="flow-item">
+                            <div class="flow-icon">🔐</div>
+                            <h4>Main Process</h4>
+                            <p>License Check</p>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-item">
+                            <div class="flow-icon">⏱️</div>
+                            <h4>Time Validation</h4>
+                            <p>Rollback Detection</p>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-item">
+                            <div class="flow-icon">🎯</div>
+                            <h4>Renderer</h4>
+                            <p>UI Control</p>
+                        </div>
+                    </div>
+
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <div class="card-icon">📦</div>
+                            <h3>Main Process Katmanı</h3>
+                            <p>Node.js environment - Dosya sistemi erişimi ve zaman yönetimi</p>
+                        </div>
+                        <div class="info-card">
+                            <div class="card-icon">🌐</div>
+                            <h3>Renderer Katmanı</h3>
+                            <p>Browser environment - Kullanıcı arayüzü ve yönlendirme</p>
+                        </div>
+                        <div class="info-card">
+                            <div class="card-icon">🔗</div>
+                            <h3>IPC Kanalları</h3>
+                            <p>İki katman arasında güvenli iletişim ve veri alışverişi</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Protection Tab -->
+                <div id="tab-time-protection" class="tab-content">
+                    <h3>🔒 Time Rollback Protection Sistemi</h3>
+                    <p class="tab-desc">Kullanıcının sistem saatini geri alarak lisans süresini uzatmasını engelleyen
+                        mekanizma</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="code-title">📄 main.js - Time Protection Implementation</span>
+                            <button class="copy-code-btn" onclick="copyCode('code-time-1')">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="currentColor"
+                                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                                </svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code id="code-time-1">const fs = require('fs');
+const path = require('path');
+
+// Son kullanım zamanını oku
+function readLastUseMs() {
+  try {
+    const filePath = path.join(app.getPath('userData'), 'last_use.json');
+    if (!fs.existsSync(filePath)) return 0;
+    
+    const data = fs.readFileSync(filePath, 'utf8');
+    const parsed = JSON.parse(data);
+    return typeof parsed.lastUseMs === 'number' ? parsed.lastUseMs : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
+// Mevcut zamanı kaydet
+function writeLastUseMs(ms) {
+  try {
+    const filePath = path.join(app.getPath('userData'), 'last_use.json');
+    fs.writeFileSync(filePath, JSON.stringify({ lastUseMs: ms }), 'utf8');
+  } catch (e) {
+    console.error('Zaman yazma hatası:', e);
+  }
+}
+
+// Geri alma kontrolü
+function checkTimeRollback() {
+  const nowMs = Date.now();
+  const lastMs = readLastUseMs();
+  const toleranceMs = 60 * 1000; // 1 dakika tolerans
+  
+  // Şüpheli durum: Şimdiki zaman < Kayıtlı zaman
+  if (lastMs > 0 && nowMs + toleranceMs < lastMs) {
+    return {
+      rollbackDetected: true,
+      message: 'Sistem saati geri alınmış!',
+      lastUseISO: new Date(lastMs).toISOString()
+    };
+  }
+  
+  // Güncelle ve geçer ver
+  writeLastUseMs(nowMs);
+  return { rollbackDetected: false };
+}</code></pre>
+                    </div>
+
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">✅</span>
+                            <div>
+                                <strong>Sürekli Kayıt</strong>
+                                <p>Uygulama her kapandığında timestamp kaydedilir</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✅</span>
+                            <div>
+                                <strong>Tolerans Mekanizması</strong>
+                                <p>Saat senkronizasyonu için 1 dakika tolerans</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">✅</span>
+                            <div>
+                                <strong>Hata Yönetimi</strong>
+                                <p>Dosya erişim hatalarında güvenli fallback</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expiry Tab -->
+                <div id="tab-expiry" class="tab-content">
+                    <h3>📅 Expiry Date Kontrolü</h3>
+                    <p class="tab-desc">Sabit bir son kullanım tarihiyle lisansı sınırlama yöntemi</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="code-title">📄 license.html - Expiry Check</span>
+                            <button class="copy-code-btn" onclick="copyCode('code-expiry-1')">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="currentColor"
+                                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                                </svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code id="code-expiry-1">// Sabit bitiş tarihi tanımla (HARDCODED)
+const EXPIRY_ISO = '2028-01-01T00:00:00';
+
+// Kalan süreyi hesapla ve formatla
+function formatRemaining(ms) {
+  if (ms <= 0) return '00 gün 00:00:00';
+  
+  const totalSeconds = Math.floor(ms / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  
+  return `${pad(days)} gün ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
+// Süre kontrolü
+function checkExpiry() {
+  const now = new Date();
+  const expiry = new Date(EXPIRY_ISO);
+  const diff = expiry.getTime() - now.getTime();
+  
+  if (diff <= 0) {
+    return {
+      expired: true,
+      message: 'Lisans süresi doldu',
+      remaining: '00 gün 00:00:00'
+    };
+  }
+  
+  return {
+    expired: false,
+    remaining: formatRemaining(diff),
+    expiryDate: expiry.toLocaleDateString('tr-TR')
+  };
+}
+
+// UI'de göster
+function updateLicenseUI() {
+  const status = checkExpiry();
+  
+  if (status.expired) {
+    document.getElementById('continueBtn').disabled = true;
+    document.getElementById('status').innerHTML = 
+      `<span class="error">⚠️ ${status.message}</span>`;
+  } else {
+    document.getElementById('countdown').textContent = status.remaining;
+  }
+}</code></pre>
+                    </div>
+
+                    <div class="warning-box">
+                        <div class="warning-icon">⚠️</div>
+                        <div>
+                            <strong>Güvenlik Notu</strong>
+                            <p>Hardcoded tarihler kolayca değiştirilebilir. İleri seviye projeler için remote validation
+                                önerilir.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UI Integration Tab -->
+                <div id="tab-ui-integration" class="tab-content">
+                    <h3>🎨 Renderer Katmanı Entegrasyonu</h3>
+                    <p class="tab-desc">License.html sayfası ile kullanıcı yönlendirme mekanizması</p>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="code-title">📄 intro.html - License Redirect</span>
+                            <button class="copy-code-btn" onclick="copyCode('code-ui-1')">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="currentColor"
+                                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                                </svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code id="code-ui-1">// Sayfa yüklenmeden önce kontrol
+(function checkBeforeRender() {
+  const EXPIRY_ISO = '2028-01-01T00:00:00';
+  const { ipcRenderer } = require('electron');
+  
+  // Süre kontrolü
+  if (new Date().getTime() >= new Date(EXPIRY_ISO).getTime()) {
+    window.location.replace('license.html');
+    return;
+  }
+  
+  // Zaman geri alma kontrolü (IPC ile Main Process'e sor)
+  ipcRenderer.invoke('get-time-status').then((status) => {
+    if (status && status.rollbackDetected) {
+      window.location.replace('license.html');
+    }
+  }).catch(() => {
+    // Hata durumunda güvenli tarafta kal
+    console.warn('Time status check failed');
+  });
+})();</code></pre>
+                    </div>
+
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="code-title">📄 main.js - IPC Handler</span>
+                            <button class="copy-code-btn" onclick="copyCode('code-ui-2')">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="currentColor"
+                                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                                </svg>
+                                Copy
+                            </button>
+                        </div>
+                        <pre><code id="code-ui-2">const { ipcMain } = require('electron');
+
+// Renderer'dan gelen zaman durumu sorgusunu yanıtla
+ipcMain.handle('get-time-status', async () => {
+  const status = checkTimeRollback();
+  return {
+    nowMs: Date.now(),
+    lastUseMs: readLastUseMs(),
+    rollbackDetected: status.rollbackDetected,
+    lastUseISO: status.lastUseISO || ''
+  };
+});</code></pre>
+                    </div>
+                </div>
+
+                <!-- Advanced Tab -->
+                <div id="tab-advanced" class="tab-content">
+                    <h3>🚀 İleri Seviye Güvenlik Yöntemleri</h3>
+                    <p class="tab-desc">Profesyonel ticari uygulamalar için öneriler</p>
+
+                    <div class="advanced-grid">
+                        <div class="advanced-card">
+                            <div class="advanced-header">
+                                <div class="advanced-icon">🌐</div>
+                                <h4>Remote Validation</h4>
+                            </div>
+                            <p>Lisans kontrolünü uzak bir API üzerinden yapın</p>
+                            <div class="code-snippet">
+                                <code>fetch('https://api.yourapp.com/validate')</code>
+                            </div>
+                        </div>
+
+                        <div class="advanced-card">
+                            <div class="advanced-header">
+                                <div class="advanced-icon">🔐</div>
+                                <h4>Code Obfuscation</h4>
+                            </div>
+                            <p>Kod'u karıştırarak reverse engineering zorlaştırın</p>
+                            <div class="code-snippet">
+                                <code>npm install javascript-obfuscator</code>
+                            </div>
+                        </div>
+
+                        <div class="advanced-card">
+                            <div class="advanced-header">
+                                <div class="advanced-icon">💻</div>
+                                <h4>Machine ID Lock</h4>
+                            </div>
+                            <p>Lisansı belirli bir bilgisayara kilitleyin</p>
+                            <div class="code-snippet">
+                                <code>npm install node-machine-id</code>
+                            </div>
+                        </div>
+
+                        <div class="advanced-card">
+                            <div class="advanced-header">
+                                <div class="advanced-icon">🔑</div>
+                                <h4>RSA Encryption</h4>
+                            </div>
+                            <p>Asimetrik şifreleme ile lisans anahtarları</p>
+                            <div class="code-snippet">
+                                <code>const crypto = require('crypto')</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="implementation-example">
+                        <h4>💡 Machine ID Örnek Kullanım</h4>
+                        <div class="code-example">
+                            <div class="code-header">
+                                <span class="code-title">📄 Donanım Kilidi Uygulaması</span>
+                                <button class="copy-code-btn" onclick="copyCode('code-adv-1')">
+                                    <svg viewBox="0 0 24 24" width="16" height="16">
+                                        <path fill="currentColor"
+                                            d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                                    </svg>
+                                    Copy
+                                </button>
+                            </div>
+                            <pre><code id="code-adv-1">const { machineIdSync } = require('node-machine-id');
+const crypto = require('crypto');
+
+// Benzersiz makine kimliği al
+function getMachineId() {
+  return machineIdSync({ original: true });
+}
+
+// Lisans anahtarı oluştur (sunucu tarafında)
+function generateLicense(machineId, expiryDate) {
+  const data = {
+    machineId: machineId,
+    expiry: expiryDate,
+    timestamp: Date.now()
+  };
+  
+  // Private key ile imzala
+  const sign = crypto.createSign('RSA-SHA256');
+  sign.update(JSON.stringify(data));
+  const signature = sign.sign(privateKey, 'base64');
+  
+  return { data, signature };
+}
+
+// Lisans doğrula (client tarafında)
+function validateLicense(license, publicKey) {
+  const currentMachineId = getMachineId();
+  
+  // Makine ID kontrolü
+  if (license.data.machineId !== currentMachineId) {
+    throw new Error('Bu lisans bu bilgisayar için geçerli değil');
+  }
+  
+  // Süre kontrolü
+  if (Date.now() > license.data.expiry) {
+    throw new Error('Lisans süresi dolmuş');
+  }
+  
+  // İmza doğrulama
+  const verify = crypto.createVerify('RSA-SHA256');
+  verify.update(JSON.stringify(license.data));
+  
+  if (!verify.verify(publicKey, license.signature, 'base64')) {
+    throw new Error('Lisans imzası geçersiz');
+  }
+  
+  return true;
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-footer-advanced">
+                <div class="footer-badge">⭐ AÇIK KAYNAK</div>
+                <p>Bu proje tamamen açık kaynak olarak dağıtılmaktadır. Ticari kullanım için kendi lisans sisteminizi
+                    entegre edebilirsiniz.</p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">📚 Dokümantasyon</a>
+                    <a href="#" class="footer-link">💬 GitHub Discussions</a>
+                    <a href="#" class="footer-link">🐛 Issue Tracker</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="titlebar">
+        <div class="titlebar-title">Ekran Yayını</div>
+        <div class="window-controls">
+            <button class="window-control minimize" onclick="ipcRenderer.send('minimize-window')" title="Küçült">
+                <svg width="10" height="1" viewBox="0 0 10 1">
+                    <path d="M0 0h10v1H0z" fill="currentColor" />
+                </svg>
+            </button>
+            <button class="window-control close" onclick="ipcRenderer.send('close-window')" title="Kapat">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                    <path d="M1 1l10 10m0-10L1 11" stroke="currentColor" stroke-width="1.1" fill="none" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="theme-switch" onclick="toggleTheme()">
+        <svg class="sun" viewBox="0 0 24 24" width="24" height="24">
+            <path fill="currentColor"
+                d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" />
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" width="24" height="24" style="display:none;">
+            <path fill="currentColor"
+                d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z" />
+        </svg>
+    </div>
+
+    <div class="language-switch" onclick="toggleLanguage()">
+        <span class="lang-tr">TR</span>
+        <span class="lang-en" style="display:none;">EN</span>
+    </div>
+
+    <div class="container">
+        <h1>Ekran Yayını</h1>
+
+        <div class="control-panel">
+            <select id="networkInterfaces">
+                <option value="">Ağ Arayüzü Seçin</option>
+            </select>
+            <button id="startButton">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="currentColor" d="M8 5v14l11-7z" />
+                </svg>
+                Yayını Başlat
+            </button>
+            <button id="stopButton" disabled>
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="currentColor" d="M6 6h12v12H6z" />
+                </svg>
+                Yayını Durdur
+            </button>
+            <button id="routerInfoButton" class="info-button" style="display: none;">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="currentColor"
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                </svg>
+                Router Ayarları
+            </button>
+        </div>
+
+        <div id="stream-info" class="stream-info">
+            <div class="url-boxes">
+                <div class="url-box">
+                    <h3>
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor"
+                                d="M4.5 4.5L6.5 6.5M17.5 17.5L19.5 19.5M12 2C17.5 2 22 6.5 22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2ZM12 5C8.7 5 6 7.7 6 11C6 14.3 8.7 17 12 17C15.3 17 18 14.3 18 11C18 7.7 15.3 5 12 5Z" />
+                        </svg>
+                        RTSP URL
+                    </h3>
+                    <div class="url-container">
+                        <input type="text" id="rtspUrl" readonly>
+                        <button class="copy-btn" onclick="copyToClipboard('rtspUrl')">Kopyala</button>
+                    </div>
+                </div>
+
+                <div class="url-box">
+                    <h3>
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor"
+                                d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM12 20C7.6 20 4 16.4 4 12C4 7.6 7.6 4 12 4C16.4 4 20 7.6 20 12C20 16.4 16.4 20 12 20ZM12 7V13L16 15L15.3 16.3L10.3 13.7V7H12Z" />
+                        </svg>
+                        WEB URL
+                    </h3>
+                    <div class="url-container">
+                        <input type="text" id="webUrl" readonly>
+                        <button class="copy-btn" onclick="copyToClipboard('webUrl')">Kopyala</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fps-container">
+                <h3>Yayın İstatistikleri</h3>
+                <div class="fps" id="fpsValue">-- FPS</div>
+            </div>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div id="customAlert" class="custom-alert">
+            <div class="alert-content">
+                <div class="alert-icon">
+                    <svg viewBox="0 0 24 24" class="warning-icon">
+                        <path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z" />
+                    </svg>
+                </div>
+                <h3>Aktif Yayın Var!</h3>
+                <p>Uygulamayı kapatmadan önce yayını durdurmak ister misiniz?</p>
+                <div class="alert-buttons">
+                    <button class="alert-button cancel">İptal</button>
+                    <button class="alert-button confirm">Yayını Durdur ve Kapat</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="routerModal" class="custom-alert">
+            <div class="alert-content router-content">
+                <div class="modal-header">
+                    <h2>Router Port Yönlendirme</h2>
+                    <button class="close-btn" onclick="closeRouterModal()">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor"
+                                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="router-steps">
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h3>Router Yönetim Paneline Giriş</h3>
+                        </div>
+                        <div class="step-content">
+                            <ul>
+                                <li>Tarayıcınızı açın ve adres çubuğuna router'ınızın IP adresini yazın (genellikle
+                                    192.168.1.1 veya 192.168.0.1)</li>
+                                <li>Kullanıcı adı ve şifrenizi girin (varsayılan olarak genellikle admin/admin)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h3>Port Yönlendirme Menüsünü Bulun</h3>
+                        </div>
+                        <div class="step-content">
+                            <ul>
+                                <li>Genellikle "Advanced Settings", "Gelişmiş Ayarlar" veya "Port Forwarding" bölümünde
+                                    bulunur</li>
+                                <li>Bazı router'larda "NAT", "Virtual Server" veya "Port Mapping" olarak da
+                                    adlandırılabilir</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h3>Port Yönlendirme Kurallarını Ekleyin</h3>
+                        </div>
+                        <div class="step-content">
+                            <div class="port-rules">
+                                <div class="port-rule">
+                                    <div class="rule-header">RTSP Port (8554 TCP)</div>
+                                    <div class="rule-content">
+                                        <div class="rule-item">
+                                            <span data-translate="externalPort">Dış Port:</span>
+                                            <span class="value">8554</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="internalPort">İç Port:</span>
+                                            <span class="value">8554</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="protocol">Protokol:</span>
+                                            <span class="value">TCP</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="targetIP">Hedef IP:</span>
+                                            <span class="value" id="localIpDisplay"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="port-rule">
+                                    <div class="rule-header">WebRTC Port (8889 TCP)</div>
+                                    <div class="rule-content">
+                                        <div class="rule-item">
+                                            <span data-translate="externalPort">Dış Port:</span>
+                                            <span class="value">8889</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="internalPort">İç Port:</span>
+                                            <span class="value">8889</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="protocol">Protokol:</span>
+                                            <span class="value">TCP</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="targetIP">Hedef IP:</span>
+                                            <span class="value" id="localIpDisplay2"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="port-rule">
+                                    <div class="rule-header">UDP Port (8189 UDP)</div>
+                                    <div class="rule-content">
+                                        <div class="rule-item">
+                                            <span data-translate="externalPort">Dış Port:</span>
+                                            <span class="value">8189</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="internalPort">İç Port:</span>
+                                            <span class="value">8189</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="protocol">Protokol:</span>
+                                            <span class="value">UDP</span>
+                                        </div>
+                                        <div class="rule-item">
+                                            <span data-translate="targetIP">Hedef IP:</span>
+                                            <span class="value" id="localIpDisplay3"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-number">4</div>
+                            <h3>Bağlantı Bilgileri</h3>
+                        </div>
+                        <div class="step-content">
+                            <p>Port yönlendirme işlemini tamamladıktan sonra, dışarıdan bağlanmak için:</p>
+                            <div class="connection-info">
+                                <div class="info-item">
+                                    <span>RTSP:</span>
+                                    <code id="externalRtspUrl"></code>
+                                </div>
+                                <div class="info-item">
+                                    <span>Web:</span>
+                                    <code id="externalWebUrl"></code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-info">
+            <div class="copyright">© 2021-2026 PromSoftware - Tüm Hakları Saklıdır</div>
+            <div class="version">V4.2.2</div>
+        </div>
+    </div>
+
+    <audio id="notificationSound">
+        <source src="C:\\Windows\\Media\\Windows Notify System Generic.wav" type="audio/wav">
+        <source src="C:\\Windows\\Media\\Windows Notify.wav" type="audio/wav">
+        <source src="C:\\Windows\\Media\\notify.wav" type="audio/wav">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
