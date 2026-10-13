@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-4.2.2-blue.svg)
+![Version](https://img.shields.io/badge/version-4.3.0-blue.svg)
 ![License](https://img.shields.io/badge/license-Open%20Source-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)
@@ -223,7 +223,7 @@ npm run build
 Build çıktısı `dist/` klasöründe oluşacaktır:
 ```
 dist/
-  └── Ekran Yayını Setup 4.2.2.exe
+  └── Ekran Yayını Setup 4.3.0.exe
 ```
 
 ### Build Yapılandırması
@@ -244,7 +244,7 @@ Bu proje **tamamen açık kaynak** ve **ücretsizdir**. Ancak, kendi ürününü
 
 **🔐 Lisans Entegrasyon Rehberi**
 
-Uygulamanın sağ alt köşesindeki **ℹ️ İnfo** butonuna tıklayarak detaylı **Lisans Sistemi Entegrasyon Rehberi**ne ulaşabilirsiniz.
+Detaylı rehber için proje kökündeki [`LISANS_ENTEGRASYON.md`](./LISANS_ENTEGRASYON.md) dosyasına bakın.
 
 Rehberde şunlar yer alır:
 - ⏰ **Zaman Geri Alma Koruması** - Time rollback detection
@@ -429,7 +429,7 @@ Bu projeyi kullandığınız için teşekkürler! Projeye ⭐ vermeyi unutmayın
 
 **Made with ❤️ by [PromSoftware](https://promsoftware.com.tr)**
 
-**v4.2.2** | © 2021-2026 PromSoftware | Tüm Hakları Saklıdır
+**v4.3.0** | © 2021-2026 PromSoftware | Tüm Hakları Saklıdır
 
 [⬆ Başa Dön](#-ekran-yayını---screen-broadcasting-application)
 

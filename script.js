@@ -66,7 +66,7 @@ const translations = {
         rtspPort: "RTSP Port (8554 TCP)",
         webRtcPort: "WebRTC Port (8889 TCP)",
         udpPort: "UDP Port (8189 UDP)",
-        close: "Kapat",
+        close: "Arka plana al",
         fps: "FPS",
         loading: "Yükleniyor...",
         error: "Hata",
@@ -80,7 +80,9 @@ const translations = {
         exit: "Çıkış",
         minimize: "Küçült",
         maximize: "Büyüt",
-        restore: "Geri Yükle"
+        restore: "Geri Yükle",
+        statusReady: "Hazır",
+        statusLive: "Canlı"
     },
     en: {
         title: "Screen Stream",
@@ -136,7 +138,7 @@ const translations = {
         rtspPort: "RTSP Port (8554 TCP)",
         webRtcPort: "WebRTC Port (8889 TCP)",
         udpPort: "UDP Port (8189 UDP)",
-        close: "Close",
+        close: "Send to tray",
         fps: "FPS",
         loading: "Loading...",
         error: "Error",
@@ -150,9 +152,22 @@ const translations = {
         exit: "Exit",
         minimize: "Minimize",
         maximize: "Maximize",
-        restore: "Restore"
+        restore: "Restore",
+        statusReady: "Ready",
+        statusLive: "Live"
     }
 };
+
+function setLiveStatus(live) {
+    const pill = document.getElementById('livePill');
+    if (!pill) return;
+    const lang = translations[currentLanguage];
+    pill.dataset.state = live ? 'live' : 'idle';
+    const label = pill.querySelector('.status-label');
+    if (label) {
+        label.textContent = live ? lang.statusLive : lang.statusReady;
+    }
+}
 
 let currentLanguage = 'tr';
 
@@ -185,6 +200,7 @@ function updateLanguage() {
 
     // Update all text elements
     document.querySelector('h1').textContent = lang.title;
+    setLiveStatus(isStreaming);
     document.querySelector('#networkInterfaces option').textContent = lang.selectInterface;
     document.querySelector('#startButton').innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>${lang.startStream}`;
     document.querySelector('#stopButton').innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>${lang.stopStream}`;
@@ -389,9 +405,10 @@ stopButton.addEventListener('click', () => {
     ipcRenderer.send('stop-stream');
     startButton.disabled = false;
     stopButton.disabled = true;
-    streamInfo.style.display = 'none';
+    streamInfo.classList.remove('visible');
     routerInfoButton.style.display = 'none';
     isStreaming = false;
+    setLiveStatus(false);
     updateStatus(lang.streamStopped);
 });
 
@@ -408,9 +425,9 @@ ipcRenderer.on('stream-started', (event, urls) => {
     const lang = translations[currentLanguage];
     document.getElementById('rtspUrl').value = urls.rtspUrl;
     document.getElementById('webUrl').value = urls.webUrl;
-    streamInfo.style.display = 'grid';
     routerInfoButton.style.display = 'block';
     isStreaming = true;
+    setLiveStatus(true);
     updateStatus(lang.streamStarted);
 
     // Router modal için IP'leri ve metinleri güncelle
@@ -462,10 +479,20 @@ ipcRenderer.on('stream-started', (event, urls) => {
 ipcRenderer.on('stream-error', (event, error) => {
     startButton.disabled = false;
     stopButton.disabled = true;
-    streamInfo.style.display = 'none';
+    streamInfo.classList.remove('visible');
     routerInfoButton.style.display = 'none';
     isStreaming = false;
+    setLiveStatus(false);
     updateStatus(error.message, 'error');
+});
+
+ipcRenderer.on('stream-stopped', () => {
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    streamInfo.classList.remove('visible');
+    routerInfoButton.style.display = 'none';
+    isStreaming = false;
+    setLiveStatus(false);
 });
 
 ipcRenderer.on('stream-stats', (event, stats) => {
@@ -506,83 +533,10 @@ function closeRouterModal() {
     routerModal.style.display = 'none';
 }
 
-// Advanced Guide Functions
-function toggleInfoGuide() {
-    const modal = document.getElementById('infoGuideModal');
-    if (modal.style.display === 'block') {
-        modal.style.display = 'none';
-    } else {
-        modal.style.display = 'block';
-    }
-}
-
-function switchTab(tabName) {
-    // Hide all tab contents
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(tab => tab.classList.remove('active'));
-
-    // Remove active class from all buttons
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => btn.classList.remove('active'));
-
-    // Show selected tab
-    const selectedTab = document.getElementById(`tab-${tabName}`);
-    if (selectedTab) {
-        selectedTab.classList.add('active');
-    }
-
-    // Activate button
-    event.target.classList.add('active');
-}
-
-function copyCode(codeId) {
-    const codeElement = document.getElementById(codeId);
-    if (!codeElement) return;
-
-    const code = codeElement.textContent;
-
-    // Modern clipboard API
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(code).then(() => {
-            // Show success feedback
-            const btn = event.target.closest('.copy-code-btn');
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
-            btn.style.background = 'rgba(16, 185, 129, 0.4)';
-
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.style.background = 'rgba(16, 185, 129, 0.2)';
-            }, 2000);
-        }).catch(err => {
-            console.error('Copy failed:', err);
-        });
-    } else {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = code;
-        textArea.style.position = 'fixed';
-        textArea.style.opacity = '0';
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-            document.execCommand('copy');
-            console.log('Code copied!');
-        } catch (err) {
-            console.error('Copy failed:', err);
-        }
-        document.body.removeChild(textArea);
-    }
-}
-
 window.addEventListener('click', (event) => {
     const routerModal = document.getElementById('routerModal');
-    const infoModal = document.getElementById('infoGuideModal');
     if (event.target === routerModal) {
         routerModal.style.display = 'none';
-    }
-    if (event.target === infoModal) {
-        infoModal.style.display = 'none';
     }
 });
 

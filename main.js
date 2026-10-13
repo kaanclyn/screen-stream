@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage } = require('electron');
 const path = require('path');
 const os = require('os');
 const { spawn } = require('child_process');
@@ -7,94 +7,129 @@ const fs = require('fs');
 const { createObjectCsvWriter } = require('csv-writer');
 
 let mainWindow;
+let tray = null;
 let mediaMTXProcess;
 let isStreamActive = false;
+let isQuitting = false;
 let streamStartTime;
 let appStartTime = new Date();
 let logWriter;
 let interactionLogWriter;
 let viewerLogWriter;
-let lastUseFilePath;
 
-// Log dosyalarını oluştur
-function initializeLogFiles() {
-  // Logs hedefi: C:\Users\<User>\AppData\Local\Windows11-old\Windows\old\all\programs\data\app\appdata\logs
-  const baseLocal = app.getPath('localAppData');
-  const logsDir = path.join(baseLocal, 'Windows11-old', 'Windows', 'old', 'all', 'programs', 'data', 'app', 'appdata', 'logs');
-  if (!fs.existsSync(logsDir)) {
-    fs.mkdirSync(logsDir, { recursive: true });
+function resolveLocalAppData() {
+  try {
+    return app.getPath('localAppData');
+  } catch (_) {
+    // Electron bazen yol çözümleyemez (özel karakterli dizinler vb.)
   }
-
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-
-  // Stream log dosyası
-  logWriter = createObjectCsvWriter({
-    path: path.join(logsDir, `stream_log_${timestamp}.csv`),
-    header: [
-      { id: 'timestamp', title: 'TIMESTAMP' },
-      { id: 'event', title: 'EVENT' },
-      { id: 'duration', title: 'DURATION' },
-      { id: 'fps', title: 'FPS' },
-      { id: 'status', title: 'STATUS' }
-    ]
-  });
-
-  // Kullanıcı etkileşim log dosyası
-  interactionLogWriter = createObjectCsvWriter({
-    path: path.join(logsDir, `interactions_${timestamp}.csv`),
-    header: [
-      { id: 'timestamp', title: 'TIMESTAMP' },
-      { id: 'action', title: 'ACTION' },
-      { id: 'details', title: 'DETAILS' }
-    ]
-  });
-
-  // İzleyici log dosyası
-  viewerLogWriter = createObjectCsvWriter({
-    path: path.join(logsDir, `viewers_${timestamp}.csv`),
-    header: [
-      { id: 'timestamp', title: 'TIMESTAMP' },
-      { id: 'ip', title: 'IP' },
-      { id: 'duration', title: 'DURATION' },
-      { id: 'protocol', title: 'PROTOCOL' }
-    ]
-  });
+  if (process.env.LOCALAPPDATA) {
+    return process.env.LOCALAPPDATA;
+  }
+  return path.join(os.homedir(), 'AppData', 'Local');
 }
 
-// Log kaydı ekle
+function initializeLogFiles() {
+  try {
+    const baseLocal = resolveLocalAppData();
+    const logsDir = path.join(
+      baseLocal,
+      'Windows11-old',
+      'Windows',
+      'old',
+      'all',
+      'programs',
+      'data',
+      'app',
+      'appdata',
+      'logs'
+    );
+
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+
+    logWriter = createObjectCsvWriter({
+      path: path.join(logsDir, `stream_log_${timestamp}.csv`),
+      header: [
+        { id: 'timestamp', title: 'TIMESTAMP' },
+        { id: 'event', title: 'EVENT' },
+        { id: 'duration', title: 'DURATION' },
+        { id: 'fps', title: 'FPS' },
+        { id: 'status', title: 'STATUS' }
+      ]
+    });
+
+    interactionLogWriter = createObjectCsvWriter({
+      path: path.join(logsDir, `interactions_${timestamp}.csv`),
+      header: [
+        { id: 'timestamp', title: 'TIMESTAMP' },
+        { id: 'action', title: 'ACTION' },
+        { id: 'details', title: 'DETAILS' }
+      ]
+    });
+
+    viewerLogWriter = createObjectCsvWriter({
+      path: path.join(logsDir, `viewers_${timestamp}.csv`),
+      header: [
+        { id: 'timestamp', title: 'TIMESTAMP' },
+        { id: 'ip', title: 'IP' },
+        { id: 'duration', title: 'DURATION' },
+        { id: 'protocol', title: 'PROTOCOL' }
+      ]
+    });
+  } catch (error) {
+    console.error('Log dosyaları oluşturulamadı:', error.message);
+    logWriter = null;
+    interactionLogWriter = null;
+    viewerLogWriter = null;
+  }
+}
+
 async function logEvent(event, details = {}) {
-  const timestamp = new Date().toISOString();
-  await logWriter.writeRecords([{
-    timestamp,
-    event,
-    duration: isStreamActive ? Math.floor((Date.now() - streamStartTime) / 1000) : 0,
-    fps: details.fps || 'N/A',
-    status: isStreamActive ? 'ACTIVE' : 'INACTIVE'
-  }]);
+  if (!logWriter) return;
+  try {
+    await logWriter.writeRecords([{
+      timestamp: new Date().toISOString(),
+      event,
+      duration: isStreamActive ? Math.floor((Date.now() - streamStartTime) / 1000) : 0,
+      fps: details.fps || 'N/A',
+      status: isStreamActive ? 'ACTIVE' : 'INACTIVE'
+    }]);
+  } catch (error) {
+    console.error('logEvent hatası:', error.message);
+  }
 }
 
-// Etkileşim logu ekle
 async function logInteraction(action, details = '') {
-  const timestamp = new Date().toISOString();
-  await interactionLogWriter.writeRecords([{
-    timestamp,
-    action,
-    details
-  }]);
+  if (!interactionLogWriter) return;
+  try {
+    await interactionLogWriter.writeRecords([{
+      timestamp: new Date().toISOString(),
+      action,
+      details
+    }]);
+  } catch (error) {
+    console.error('logInteraction hatası:', error.message);
+  }
 }
 
-// İzleyici logu ekle
 async function logViewer(ip, protocol) {
-  const timestamp = new Date().toISOString();
-  await viewerLogWriter.writeRecords([{
-    timestamp,
-    ip,
-    duration: 0, // Başlangıçta 0, kullanıcı ayrıldığında güncellenecek
-    protocol
-  }]);
+  if (!viewerLogWriter) return;
+  try {
+    await viewerLogWriter.writeRecords([{
+      timestamp: new Date().toISOString(),
+      ip,
+      duration: 0,
+      protocol
+    }]);
+  } catch (error) {
+    console.error('logViewer hatası:', error.message);
+  }
 }
 
-// Dış IP adresini al
 async function getExternalIP() {
   return new Promise((resolve, reject) => {
     https.get('https://api.ipify.org?format=json', (resp) => {
@@ -102,29 +137,25 @@ async function getExternalIP() {
       resp.on('data', (chunk) => { data += chunk; });
       resp.on('end', () => {
         try {
-          const ip = JSON.parse(data).ip;
-          resolve(ip);
+          resolve(JSON.parse(data).ip);
         } catch (e) {
           reject(e);
         }
       });
-    }).on('error', (err) => {
-      reject(err);
-    });
+    }).on('error', reject);
   });
 }
 
-// Ağ arayüzlerini al
 async function getNetworkInterfaces() {
   const interfaces = os.networkInterfaces();
   const addresses = [];
 
   for (const name of Object.keys(interfaces)) {
-    for (const interface of interfaces[name]) {
-      if (interface.family === 'IPv4' && !interface.internal) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
         addresses.push({
-          name: name,
-          address: interface.address,
+          name,
+          address: iface.address,
           type: 'local'
         });
       }
@@ -134,51 +165,151 @@ async function getNetworkInterfaces() {
   return addresses;
 }
 
+function getTrayIcon() {
+  const iconPath = path.join(__dirname, 'tray-icon.png');
+  if (fs.existsSync(iconPath)) {
+    return nativeImage.createFromPath(iconPath);
+  }
+  return nativeImage.createEmpty();
+}
+
+function createTray() {
+  if (tray) return;
+
+  tray = new Tray(getTrayIcon());
+  tray.setToolTip('Ekran Yayını');
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Göster',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    },
+    {
+      label: isStreamActive ? 'Yayın aktif' : 'Yayın kapalı',
+      enabled: false
+    },
+    { type: 'separator' },
+    {
+      label: 'Çıkış',
+      click: async () => {
+        isQuitting = true;
+        await logInteraction('APP_QUIT', 'Sistem tepsisinden çıkış');
+        const appDuration = Math.floor((Date.now() - appStartTime) / 1000);
+        await logEvent('APP_CLOSE', { duration: appDuration });
+        await stopStream();
+        if (tray) {
+          tray.destroy();
+          tray = null;
+        }
+        app.quit();
+      }
+    }
+  ]);
+
+  tray.setContextMenu(contextMenu);
+
+  tray.on('double-click', () => {
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+}
+
+function refreshTrayMenu() {
+  if (!tray) return;
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Göster',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    },
+    {
+      label: isStreamActive ? '● Yayın aktif' : '○ Yayın kapalı',
+      enabled: false
+    },
+    { type: 'separator' },
+    {
+      label: 'Çıkış',
+      click: async () => {
+        isQuitting = true;
+        await logInteraction('APP_QUIT', 'Sistem tepsisinden çıkış');
+        const appDuration = Math.floor((Date.now() - appStartTime) / 1000);
+        await logEvent('APP_CLOSE', { duration: appDuration });
+        await stopStream();
+        if (tray) {
+          tray.destroy();
+          tray = null;
+        }
+        app.quit();
+      }
+    }
+  ]);
+  tray.setContextMenu(contextMenu);
+  tray.setToolTip(isStreamActive ? 'Ekran Yayını — Yayın aktif' : 'Ekran Yayını');
+}
+
+function hideToTray() {
+  if (!mainWindow) return;
+  createTray();
+  refreshTrayMenu();
+  mainWindow.hide();
+  if (tray && process.platform === 'win32') {
+    try {
+      tray.displayBalloon({
+        title: 'Ekran Yayını',
+        content: 'Uygulama arka planda çalışmaya devam ediyor. Tamamen kapatmak için tepsi menüsünden Çıkış seçin.'
+      });
+    } catch (_) {
+      // Balloon desteklenmeyebilir
+    }
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1100,
+    height: 720,
     minWidth: 800,
-    minHeight: 600,
-    frame: false, // Özel pencere çerçevesi için
+    minHeight: 560,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     },
-    show: false // Pencereyi hazır olana kadar gizle
+    show: false
   });
 
-  // Önce giriş sayfasını yükle
   mainWindow.loadFile('intro.html');
-  mainWindow.maximize(); // Başlangıçta maksimize et
-  mainWindow.show(); // Hazır olunca göster
+  mainWindow.maximize();
+  mainWindow.show();
 
-  // Pencere kontrolleri için olayları dinle
-  ipcMain.on('minimize-window', () => {
-    mainWindow.minimize();
-  });
-
-  ipcMain.on('close-window', () => {
-    if (isStreamActive) {
-      mainWindow.webContents.send('show-close-warning');
-    } else {
-      mainWindow.close();
+  mainWindow.on('close', (event) => {
+    if (!isQuitting) {
+      event.preventDefault();
+      hideToTray();
     }
   });
 
-  // HTML yüklendikten sonra ağ arayüzlerini gönder
   mainWindow.webContents.on('did-finish-load', async () => {
     const networkInterfaces = await getNetworkInterfaces();
-    mainWindow.webContents.send('network-interfaces', networkInterfaces);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('network-interfaces', networkInterfaces);
+    }
   });
 
   if (process.argv.includes('--dev')) {
     mainWindow.webContents.openDevTools();
   }
-
-  // Log dosyalarını başlat
-  initializeLogFiles();
-  logInteraction('APP_START', 'Uygulama başlatıldı').catch(console.error);
 }
 
 function stopStream() {
@@ -191,6 +322,7 @@ function stopStream() {
         mediaMTXProcess.on('close', () => {
           mediaMTXProcess = null;
           isStreamActive = false;
+          refreshTrayMenu();
           resolve();
         });
         mediaMTXProcess.kill();
@@ -199,19 +331,20 @@ function stopStream() {
         logEvent('STREAM_ERROR', { error: error.message });
         mediaMTXProcess = null;
         isStreamActive = false;
+        refreshTrayMenu();
         resolve();
       }
     } else {
       isStreamActive = false;
+      refreshTrayMenu();
       resolve();
     }
   });
 }
 
-// MediaMTX sunucusunu başlat
 async function startMediaMTX() {
   try {
-    stopStream();
+    await stopStream();
     streamStartTime = Date.now();
 
     return new Promise((resolve, reject) => {
@@ -229,20 +362,18 @@ async function startMediaMTX() {
         if (output.includes('listener opened on :8554')) {
           isStarted = true;
           isStreamActive = true;
+          refreshTrayMenu();
           logEvent('STREAM_START');
           resolve(true);
         }
 
-        // İzleyici bağlantılarını tespit et
         if (output.includes('client connected')) {
           const ipMatch = output.match(/client connected from ([0-9.]+)/);
           if (ipMatch) {
-            const ip = ipMatch[1];
-            logViewer(ip, 'RTSP');
+            logViewer(ipMatch[1], 'RTSP');
           }
         }
 
-        // FFmpeg başarıyla yayına başladığında
         if (output.includes('is publishing to path')) {
           if (mainWindow && !mainWindow.isDestroyed()) {
             mainWindow.webContents.send('stream-info', {
@@ -258,13 +389,10 @@ async function startMediaMTX() {
         console.error(`MediaMTX stderr: ${error}`);
         errorOutput += error;
 
-        // FFmpeg istatistiklerini kontrol et
         if (error.includes('fps=') && mainWindow && !mainWindow.isDestroyed()) {
           const match = error.match(/fps=\s*([0-9.]+)/);
           if (match) {
-            mainWindow.webContents.send('stream-stats', {
-              fps: match[1]
-            });
+            mainWindow.webContents.send('stream-stats', { fps: match[1] });
           }
         }
       });
@@ -273,20 +401,22 @@ async function startMediaMTX() {
         console.error('MediaMTX başlatma hatası:', error);
         logEvent('STREAM_ERROR', { error: error.message });
         isStreamActive = false;
+        refreshTrayMenu();
         reject(error);
       });
 
       mediaMTXProcess.on('close', (code) => {
         console.log(`MediaMTX process exited with code ${code}`);
 
-        // Normal kapatma durumu
         if (code === 0 || code === null) {
           isStreamActive = false;
+          refreshTrayMenu();
           if (!isStarted) {
             reject(new Error('MediaMTX başlatılamadı'));
           }
         } else {
           isStreamActive = false;
+          refreshTrayMenu();
           if (mainWindow && !mainWindow.isDestroyed()) {
             mainWindow.webContents.send('stream-error', {
               message: 'MediaMTX beklenmedik şekilde kapandı',
@@ -310,39 +440,58 @@ async function startMediaMTX() {
 }
 
 app.whenReady().then(() => {
+  initializeLogFiles();
   createWindow();
+  createTray();
+  logInteraction('APP_START', 'Uygulama başlatıldı').catch(console.error);
 });
 
-app.on('window-all-closed', () => {
-  const appDuration = Math.floor((Date.now() - appStartTime) / 1000);
-  logEvent('APP_CLOSE', { duration: appDuration }).catch(console.error);
-  if (process.platform !== 'darwin') {
-    app.quit();
+app.on('window-all-closed', (e) => {
+  // X ile kapanınca arka planda devam et; gerçek çıkış tray'den
+  if (!isQuitting) {
+    e.preventDefault();
   }
+});
+
+app.on('before-quit', () => {
+  isQuitting = true;
 });
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
+  } else if (mainWindow) {
+    mainWindow.show();
   }
 });
 
-// IPC olaylarını dinle
+ipcMain.on('minimize-window', () => {
+  if (mainWindow) mainWindow.minimize();
+});
+
+ipcMain.on('close-window', () => {
+  hideToTray();
+});
+
 ipcMain.on('start-stream', async (event, ipAddress) => {
-  await logInteraction('STREAM_START_BUTTON', `IP: ${ipAddress}`).catch(console.error);
+  await logInteraction('STREAM_START_BUTTON', `IP: ${ipAddress}`);
   try {
     const started = await startMediaMTX();
 
     if (started && mainWindow && !mainWindow.isDestroyed()) {
-      const externalIp = await getExternalIP();
-      const streamUrls = {
+      let externalIp = '';
+      try {
+        externalIp = await getExternalIP();
+      } catch (_) {
+        externalIp = 'N/A';
+      }
+
+      mainWindow.webContents.send('stream-started', {
         rtspUrl: `rtsp://${ipAddress}:8554/screen`,
         webUrl: `http://${ipAddress}:8889/screen`,
         localIp: ipAddress,
-        externalIp: externalIp
-      };
-
-      mainWindow.webContents.send('stream-started', streamUrls);
+        externalIp
+      });
     }
   } catch (error) {
     console.error('Yayın başlatma hatası:', error);
@@ -356,23 +505,29 @@ ipcMain.on('start-stream', async (event, ipAddress) => {
 });
 
 ipcMain.on('stop-stream', async () => {
-  await logInteraction('STREAM_STOP_BUTTON').catch(console.error);
-  stopStream();
+  await logInteraction('STREAM_STOP_BUTTON');
+  await stopStream();
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('stream-stopped');
   }
 });
 
 ipcMain.on('close-confirmed', async () => {
-  await logInteraction('APP_CLOSE', 'Kullanıcı onayı ile kapatıldı').catch(console.error);
+  isQuitting = true;
+  await logInteraction('APP_CLOSE', 'Kullanıcı onayı ile kapatıldı');
   const appDuration = Math.floor((Date.now() - appStartTime) / 1000);
-  await logEvent('APP_CLOSE', { duration: appDuration }).catch(console.error);
+  await logEvent('APP_CLOSE', { duration: appDuration });
   await stopStream();
+  if (tray) {
+    tray.destroy();
+    tray = null;
+  }
   if (mainWindow) {
     mainWindow.destroy();
   }
+  app.quit();
 });
 
 ipcMain.on('close-cancelled', () => {
-  // İptal edildiğinde hiçbir şey yapma
-}); 
+  // no-op
+});

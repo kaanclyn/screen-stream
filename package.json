@@ -1,6 +1,6 @@
 {
   "name": "ekran-yayini",
-  "version": "4.2.2",
+  "version": "4.3.0",
   "description": "Ekranınızı bir kamera gibi paylaşın !",
   "main": "main.js",
   "scripts": {
@@ -36,6 +36,7 @@
       "script.js",
       "intro.css",
       "intro.html",
+      "tray-icon.png",
       "stream-handler.js"
     ],
     "extraFiles": [
